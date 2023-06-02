@@ -1,30 +1,20 @@
-#include <glad/glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <sstream>
+#include "Base.h"
+#include "Shader.h"
 
 unsigned int VAO = 0;
 unsigned int VBO = 0;
-unsigned int shaderProgram = 0;
+
+Shader _shader;
 
 void rend()
 {
-	glUseProgram(shaderProgram);
-
-	float _time = glfwGetTime();
-	float _green = sin(_time) * 0.5f + 0.5f;
-
-	// 获取在shader中的位置
-	int _location = glGetUniformLocation(shaderProgram, "outColor");
-	// 使用 uniform 数据类型
-	glUniform4f(_location, 0.0f, _green, 0.0f, 1.0f);
+	_shader.start();
 
 	glBindVertexArray(VAO);
 
 	glDrawArrays(GL_TRIANGLES, 0, 3);
-	glUseProgram(0);
+	
+	_shader.end();
 }
 
 // 告诉shader数据解析方式
@@ -34,9 +24,9 @@ void initModel()
 {
 	float vertices[] =
 	{
-		-0.5f, -0.5, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		0.0f, 0.5f, 0.0f
+		-0.5f, -0.5, 0.0f,  1.0f, 0.0f, 0.0f, 
+		0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,
+		0.0f, 0.5f, 0.0f,   0.0f, 0.0f, 1.0f
 	};
 
 	//获取VAO
@@ -53,10 +43,12 @@ void initModel()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	// 告诉shader数据解析方式
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(sizeof(float) * 3));
+	
 	// 激活锚点
 	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
 
 	// 取消绑定
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // VBO 解绑
@@ -65,92 +57,7 @@ void initModel()
 
 void initShader(const char* _vertexPath, const char* _fragmentPath)
 {
-	std::string _vertexCode("");
-	std::string _fragCode("");
-
-	// 读取文件工具
-	std::ifstream _vShaderFile;
-	std::ifstream _fShaderFile;
-
-	// 检测是否有正确读入
-	_vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	_fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-
-	// 读取着色器文件
-	try
-	{
-		_vShaderFile.open(_vertexPath);
-		_fShaderFile.open(_fragmentPath);
-
-		std::stringstream _vShaderStream, _fShaderStream;  // 读取流
-
-		_vShaderStream << _vShaderFile.rdbuf();
-		_fShaderStream << _fShaderFile.rdbuf();
-
-		_vertexCode = _vShaderStream.str();
-		_fragCode = _fShaderStream.str();
-	}
-	catch (std::ifstream::failure e)
-	{
-		std::string errStr = "read shader fail";
-		std::cout << errStr << std::endl;
-	}
-
-	const char* _vShaderStr = _vertexCode.c_str();
-	const char* _fShaderStr = _fragCode.c_str();
-
-	// 着色器的编译
-	unsigned int _vertexID = 0;
-	unsigned int _fragID = 0;
-
-	char _infoLog[512]; // 存储错误信息
-	int _successFlag = 0;
-
-	// 顶点着色器
-	_vertexID = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(_vertexID, 1, &_vShaderStr, NULL);
-	glCompileShader(_vertexID);
-
-	// 检查是否编译成功
-	glGetShaderiv(_vertexID, GL_COMPILE_STATUS, &_successFlag);
-	if (!_successFlag)
-	{
-		glGetShaderInfoLog(_vertexID, 512, NULL, _infoLog);
-		std::string errStr(_infoLog);
-		std::cout << _infoLog << std::endl;
-	}
-
-	// 片元着色器
-	_fragID = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(_fragID, 1, &_fShaderStr, NULL);
-	glCompileShader(_fragID);
-
-	// 检查是否编译成功
-	glGetShaderiv(_fragID, GL_COMPILE_STATUS, &_successFlag);
-	if (!_successFlag)
-	{
-		glGetShaderInfoLog(_fragID, 512, NULL, _infoLog);
-		std::string errStr(_infoLog);
-		std::cout << _infoLog << std::endl;
-	}
-
-	// 着色器的链接
-	shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, _vertexID);
-	glAttachShader(shaderProgram, _fragID);
-	glLinkProgram(shaderProgram);
-
-	// 检查是否链接成功
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &_successFlag);
-	if (!_successFlag)
-	{
-		glGetProgramInfoLog(shaderProgram, 512, NULL, _infoLog);
-		std::string errStr(_infoLog);
-		std::cout << _infoLog << std::endl;
-	}
-
-	glDeleteShader(_vertexID);
-	glDeleteShader(_fragID);
+	_shader.initShader(_vertexPath, _fragmentPath);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
