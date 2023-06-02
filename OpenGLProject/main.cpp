@@ -12,8 +12,9 @@ void rend()
 
 	glBindVertexArray(VAO);
 
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-	
+	//glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // 索引绘制
+
 	_shader.end();
 }
 
@@ -24,14 +25,29 @@ void initModel()
 {
 	float vertices[] =
 	{
-		-0.5f, -0.5, 0.0f,  1.0f, 0.0f, 0.0f, 
+		0.5f,  0.5,  0.0f,  1.0f, 0.0f, 0.0f, 
 		0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,
-		0.0f, 0.5f, 0.0f,   0.0f, 0.0f, 1.0f
+		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,
+		-0.5f, 0.5f, 0.0f,    0.0f, 1.0f, 0.0f
 	};
 
-	//获取VAO
+	// 索引数组
+	unsigned int indices[] = 
+	{
+		0, 1, 3,
+		1, 2, 3
+	};
+
+	//获取VAO，在关闭VAO前，期间所有的数据都会被纳入VAO的管理
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
+
+	// 构建EBO
+	unsigned int EBO = 0;
+	glGenBuffers(1, &EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
 
 	// 获取vbo的index，即到底要分配多少个vbo
 	glGenBuffers(1, &VBO);
