@@ -11,8 +11,17 @@ unsigned int shaderProgram = 0;
 
 void rend()
 {
-	glBindVertexArray(VAO);
 	glUseProgram(shaderProgram);
+
+	float _time = glfwGetTime();
+	float _green = sin(_time) * 0.5f + 0.5f;
+
+	// 获取在shader中的位置
+	int _location = glGetUniformLocation(shaderProgram, "outColor");
+	// 使用 uniform 数据类型
+	glUniform4f(_location, 0.0f, _green, 0.0f, 1.0f);
+
+	glBindVertexArray(VAO);
 
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 	glUseProgram(0);
