@@ -1,8 +1,11 @@
 #include "Base.h"
 #include "Shader.h"
+#include "ffImage.h"
 
 unsigned int VAO = 0;
 unsigned int VBO = 0;
+
+ffImage* _pImage = NULL;
 
 Shader _shader;
 
@@ -71,6 +74,11 @@ void initModel()
 	glBindVertexArray(0); // VAO 解绑
 }
 
+void initTexture()
+{
+	_pImage = ffImage::readFromFile("res/fish.jpg");
+}
+
 void initShader(const char* _vertexPath, const char* _fragmentPath)
 {
 	_shader.initShader(_vertexPath, _fragmentPath);
@@ -114,10 +122,12 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 
-	glViewport(0, 0, 800, 600);
+	glViewport(0, 0, 820, 820);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); // 窗口大小被改变时就会被调用
 
 	initModel();
+	initTexture();
+
 	initShader("vertexShader.glsl", "fragmentShader.glsl");
 
 	while (!glfwWindowShouldClose(window)) {
