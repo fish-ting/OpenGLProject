@@ -5,12 +5,17 @@
 #include <fstream>
 #include <sstream>
 
+unsigned int VAO = 0;
 unsigned int VBO = 0;
 unsigned int shaderProgram = 0;
 
 void rend()
 {
+	glBindVertexArray(VAO);
+	glUseProgram(shaderProgram);
 
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glUseProgram(0);
 }
 
 // 告诉shader数据解析方式
@@ -24,6 +29,10 @@ void initModel()
 		0.5f, -0.5f, 0.0f,
 		0.0f, 0.5f, 0.0f
 	};
+
+	//获取VAO
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
 
 	// 获取vbo的index，即到底要分配多少个vbo
 	glGenBuffers(1, &VBO);
@@ -41,7 +50,8 @@ void initModel()
 	glEnableVertexAttribArray(0);
 
 	// 取消绑定
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0); // VBO 解绑
+	glBindVertexArray(0); // VAO 解绑
 }
 
 void initShader(const char* _vertexPath, const char* _fragmentPath)
@@ -102,7 +112,7 @@ void initShader(const char* _vertexPath, const char* _fragmentPath)
 	}
 
 	// 片元着色器
-	_vertexID = glCreateShader(GL_FRAGMENT_SHADER);
+	_fragID = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(_fragID, 1, &_fShaderStr, NULL);
 	glCompileShader(_fragID);
 
@@ -183,6 +193,9 @@ int main()
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		// 绘图
+		rend();
 
 		glfwSwapBuffers(window); // 交换颜色缓冲区，防止屏幕碎裂
 		glfwPollEvents(); // 处理用户交互事件
