@@ -26,22 +26,44 @@ void rend()
 	// 开启深度检测
 	glEnable(GL_DEPTH_TEST);
 
+	// 数据准备
+	glm::vec3 modelVecs[] = {
+	glm::vec3(0.0f,  0.0f,  0.0f),
+	glm::vec3(2.0f,  5.0f, -15.0f),
+	glm::vec3(-1.5f, -2.2f, -2.5f),
+	glm::vec3(-3.8f, -2.0f, -12.3f),
+	glm::vec3(2.4f, -0.4f, -3.5f),
+	glm::vec3(-1.7f,  3.0f, -7.5f),
+	glm::vec3(1.3f, -2.0f, -2.5f),
+	glm::vec3(1.5f,  2.0f, -2.5f),
+	glm::vec3(1.5f,  0.2f, -1.5f),
+	glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
+
 	// 计算变换矩阵
-	_viewMatrix = glm::lookAt(glm::vec3(3.0f, 3.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f),glm::vec3(0, 1, 0));
+	_viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f),glm::vec3(0, 1, 0));
 	_projMatrix = glm::perspective(glm::radians(45.0f), (float)_width / (float)_height, 0.1f, 100.0f);
 
 
 	//glBindTexture(GL_TEXTURE_2D, _texture);
-	_shader.start();
 
+	// 画多个立方体
+
+	for (int i = 0; i < 10; i++) {
+		glm::mat4 _modelMatrix(1.0f);
+		_modelMatrix = glm::translate(_modelMatrix, modelVecs[i]);
+		_modelMatrix = glm::rotate(_modelMatrix, glm::radians((float)glfwGetTime() * (i + 1) * 10), glm::vec3(0.0f, 1.0f, 0.0f));
+
+		_shader.start();
+		_shader.setMatrix("_modelMatrix", _modelMatrix);
 		_shader.setMatrix("_viewMatrix", _viewMatrix);
 		_shader.setMatrix("_projMatrix", _projMatrix);
 
 		glBindVertexArray(VAO);
 
 		glDrawArrays(GL_TRIANGLES, 0, 36); // 画36个点
-
-	_shader.end();
+		_shader.end();
+	}
 }
 
 // 告诉shader数据解析方式
@@ -93,13 +115,6 @@ void initModel()
 		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
 		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-	};
-
-	// 索引数组
-	unsigned int indices[] = 
-	{
-		0, 1, 3,
-		1, 2, 3
 	};
 
 	//获取VAO，在关闭VAO前，期间所有的数据都会被纳入VAO的管理
