@@ -29,5 +29,8 @@ public:
 	{
 		glUseProgram(0);
 	}
+
+	// 封装函数：向shader里传输数据
+	void setMatrix(const std::string& _name, glm::mat4 _matrix)const;
 };
 

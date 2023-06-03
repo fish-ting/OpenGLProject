@@ -11,15 +11,35 @@ unsigned int _texture = 0;
 
 Shader _shader;
 
+glm::mat4 _viewMatrix(1.0f);
+glm::mat4 _projMatrix(1.0f);
+
+int _width = 820;
+int _height = 820;
+
 void rend()
 {
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	// 颜色和深度区清零
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// 开启深度检测
+	glEnable(GL_DEPTH_TEST);
+
+	// 计算变换矩阵
+	_viewMatrix = glm::lookAt(glm::vec3(3.0f, 3.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f),glm::vec3(0, 1, 0));
+	_projMatrix = glm::perspective(glm::radians(45.0f), (float)_width / (float)_height, 0.1f, 100.0f);
+
+
 	//glBindTexture(GL_TEXTURE_2D, _texture);
 	_shader.start();
 
-	glBindVertexArray(VAO);
+		_shader.setMatrix("_viewMatrix", _viewMatrix);
+		_shader.setMatrix("_projMatrix", _projMatrix);
 
-	//glDrawArrays(GL_TRIANGLES, 0, 3);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // 索引绘制
+		glBindVertexArray(VAO);
+
+		glDrawArrays(GL_TRIANGLES, 0, 36); // 画36个点
 
 	_shader.end();
 }
@@ -29,13 +49,50 @@ void rend()
 
 void initModel()
 {
-	// 坐标 - 颜色 纹理
+	// 坐标 - uv , 12个三角形
 	float vertices[] =
 	{
-		0.5f,  0.5,  0.0f,    1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
-		0.5f, -0.5f, 0.0f,    0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
-		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
-		-0.5f, 0.5f, 0.0f,    0.0f, 1.0f, 0.0f,   0.0f, 1.0f
+		-0.5f,  -0.5,  -0.5f,    0.0f, 0.0f,
+		 0.5f,  -0.5,  -0.5f,    1.0f, 0.0f,
+		 0.5f,   0.5,  -0.5f,    1.0f, 1.0f,
+		 0.5f,   0.5,  -0.5f,    1.0f, 1.0f,
+		-0.5f,   0.5,  -0.5f,    0.0f, 1.0f,
+		-0.5f,  -0.5,  -0.5f,    0.0f, 0.0f,
+
+		-0.5f,  -0.5,   0.5f,    0.0f, 0.0f,
+		 0.5f,  -0.5,   0.5f,    1.0f, 0.0f,
+		 0.5f,   0.5,   0.5f,    1.0f, 1.0f,
+		 0.5f,   0.5,   0.5f,    1.0f, 1.0f,
+		-0.5f,   0.5,   0.5f,    0.0f, 1.0f,
+		-0.5f,  -0.5,   0.5f,    0.0f, 0.0f,
+
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
 
 	// 索引数组
@@ -49,12 +106,6 @@ void initModel()
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
-	// 构建EBO
-	unsigned int EBO = 0;
-	glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
 	// 获取vbo的index，即到底要分配多少个vbo
 	glGenBuffers(1, &VBO);
 
@@ -65,14 +116,12 @@ void initModel()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	// 告诉shader数据解析方式
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 3));
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 6));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(sizeof(float) * 3));
 
 	// 激活锚点
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
 
 	// 取消绑定
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // VBO 解绑
@@ -140,7 +189,7 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 
-	glViewport(0, 0, 820, 820);
+	glViewport(0, 0, _width, _height);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); // 窗口大小被改变时就会被调用
 
 	initModel();
@@ -150,9 +199,6 @@ int main()
 
 	while (!glfwWindowShouldClose(window)) {
 		processInput(window);
-
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
 
 		// 绘图
 		rend();
