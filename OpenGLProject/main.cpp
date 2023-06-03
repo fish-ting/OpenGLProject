@@ -1,6 +1,8 @@
 #include "Base.h"
 #include "Shader.h"
 #include "ffImage.h"
+#include "Camera.h"
+
 
 unsigned int VAO = 0;
 unsigned int VBO = 0;
@@ -16,6 +18,8 @@ glm::mat4 _projMatrix(1.0f);
 
 int _width = 820;
 int _height = 820;
+
+Camera _camera;
 
 void rend()
 {
@@ -41,7 +45,8 @@ void rend()
 	};
 
 	// 计算变换矩阵
-	_viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f),glm::vec3(0, 1, 0));
+	//_viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f),glm::vec3(0, 1, 0));
+	_camera.update();
 	_projMatrix = glm::perspective(glm::radians(45.0f), (float)_width / (float)_height, 0.1f, 100.0f);
 
 
@@ -56,7 +61,7 @@ void rend()
 
 		_shader.start();
 		_shader.setMatrix("_modelMatrix", _modelMatrix);
-		_shader.setMatrix("_viewMatrix", _viewMatrix);
+		_shader.setMatrix("_viewMatrix", _camera.getMatrix());
 		_shader.setMatrix("_projMatrix", _projMatrix);
 
 		glBindVertexArray(VAO);
@@ -177,6 +182,26 @@ void processInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
 	}
+
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		_camera.move(CAMERA_MOVE::MOVE_FRONT);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		_camera.move(CAMERA_MOVE::MOVE_BACK);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		_camera.move(CAMERA_MOVE::MOVE_LEFT);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		_camera.move(CAMERA_MOVE::MOVE_RIGHT);
+	}
 }
 
 int main()
@@ -207,6 +232,9 @@ int main()
 	glViewport(0, 0, _width, _height);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); // 窗口大小被改变时就会被调用
 
+	_camera.lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	_camera.setSpeed(0.005f);
+	
 	initModel();
 	initTexture();
 	
