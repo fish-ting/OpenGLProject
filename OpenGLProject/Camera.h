@@ -18,6 +18,15 @@ private:
 	glm::vec3 m_up;
 	float     m_speed;
 
+	// 鼠标控制旋转相关参数
+	float m_pitch;
+	float m_yaw;
+	float m_sensitivity;
+
+	float m_xpos;
+	float m_ypos;
+	bool m_firstMove;
+
 	glm::mat4 m_vMatrix;
 
 public:
@@ -27,6 +36,14 @@ public:
 		m_front = glm::vec3(1.0f);
 		m_up = glm::vec3(1.0f);
 		m_speed = 0.01f;
+
+		m_pitch = 0.0f;
+		m_yaw = -90.0f; // 看向z轴的负方向
+		m_sensitivity = 0.01f;
+
+		m_xpos = 0;
+		m_ypos = 0;
+		m_firstMove = true;
 
 		m_vMatrix = glm::mat4(1.0f);
 
@@ -49,5 +66,10 @@ public:
 	{
 		m_speed = _speed;
 	}
+
+	void pitch(float _yOffset);
+	void yaw(float _xOffset);
+	void setSensitivity(float _s);
+	void onMouseMove(double _xpos, double _ypos);
 };
 

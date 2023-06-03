@@ -204,6 +204,11 @@ void processInput(GLFWwindow* window)
 	}
 }
 
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	_camera.onMouseMove(xpos, ypos);
+}
+
 int main()
 {
 	// 初始化窗口库
@@ -231,6 +236,10 @@ int main()
 
 	glViewport(0, 0, _width, _height);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); // 窗口大小被改变时就会被调用
+
+	// 设置鼠标不可见
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetCursorPosCallback(window, mouse_callback); //每次鼠标动时进行回调
 
 	_camera.lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	_camera.setSpeed(0.005f);

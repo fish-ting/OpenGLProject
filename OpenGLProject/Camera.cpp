@@ -41,3 +41,64 @@ void Camera::move(CAMERA_MOVE _mode)
 		break;
 	}
 }
+
+void Camera::pitch(float _yOffset)
+{
+	m_pitch += _yOffset * m_sensitivity;
+
+	if (m_pitch >= 89.0f)
+	{
+		m_pitch = 89.0f;
+	}
+
+	if (m_pitch <= -89.0f)
+	{
+		m_pitch = -89.0f;
+	}
+
+	m_front.y = sin(glm::radians(m_pitch));
+	m_front.x = cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
+	m_front.z = sin(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
+
+	m_front = glm::normalize(m_front);
+
+	update();
+}
+
+void Camera::yaw(float _xOffset)
+{
+	m_yaw += _xOffset * m_sensitivity;
+
+	m_front.y = sin(glm::radians(m_pitch));
+	m_front.x = cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
+	m_front.z = sin(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
+
+	m_front = glm::normalize(m_front);
+
+	update();
+}
+
+void Camera::setSensitivity(float _s)
+{
+	m_sensitivity = _s;
+}
+
+void Camera::onMouseMove(double _xpos, double _ypos)
+{
+	if (m_firstMove)
+	{
+		m_xpos = _xpos;
+		m_ypos = _ypos;
+		m_firstMove = false;
+		return;
+	}
+
+	float _xOffset = _xpos - m_xpos;
+	float _yOffset = -(_ypos - m_ypos);
+
+	m_xpos = _xpos;
+	m_ypos = _ypos;
+
+	pitch(_yOffset);
+	yaw(_xOffset);
+}
