@@ -51,6 +51,7 @@ void rend()
 	_shader_cube.setMatrix("_projMatrix", _projMatrix);
 	_shader_cube.setVec3("light_color", light_color);
 	_shader_cube.setVec3("light_pos", light_pos);
+	_shader_cube.setVec3("view_pos", _camera.getPosition());
 	_shader_cube.setFloat("ambient_strength", ambient_strength);
 	glBindVertexArray(VAO_cube);
 	glDrawArrays(GL_TRIANGLES, 0, 36); // »­36¸öµã

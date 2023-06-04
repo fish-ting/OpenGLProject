@@ -21,6 +21,11 @@ glm::mat4 Camera::getMatrix()
 	return m_vMatrix;
 }
 
+glm::vec3 Camera::getPosition()
+{
+	return m_position;
+}
+
 void Camera::move(CAMERA_MOVE _mode)
 {
 	switch (_mode)

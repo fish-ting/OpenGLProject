@@ -59,6 +59,7 @@ public:
 	void update();
 
 	glm::mat4 getMatrix();
+	glm::vec3 getPosition();
 
 	void move(CAMERA_MOVE _mode);
 
