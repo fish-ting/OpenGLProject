@@ -38,6 +38,12 @@
     <None Include="fragmentShader.glsl">
       <Filter>源文件</Filter>
     </None>
+    <None Include="vsunShader.glsl">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="fsunShader.glsl">
+      <Filter>源文件</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">

@@ -8,5 +8,7 @@ uniform sampler2D ourTexture;
 
 void main()
 {
-	FragColor = texture(ourTexture, outUV);
+	vec4 sunlight = vec4(0.3f, 0.3f, 0.3f, 1.0f);
+
+	FragColor = texture(ourTexture, outUV) * sunlight;
 };

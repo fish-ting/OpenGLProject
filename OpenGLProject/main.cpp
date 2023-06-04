@@ -4,14 +4,15 @@
 #include "Camera.h"
 
 
-unsigned int VAO = 0;
-unsigned int VBO = 0;
+unsigned int VAO_cube = 0;
+unsigned int VAO_sun = 0;  // 作为光源
 
 ffImage* _pImage = NULL;
 
 unsigned int _texture = 0;
 
-Shader _shader;
+Shader _shader_cube;
+Shader _shader_sun;
 
 glm::mat4 _viewMatrix(1.0f);
 glm::mat4 _projMatrix(1.0f);
@@ -31,7 +32,7 @@ void rend()
 	glEnable(GL_DEPTH_TEST);
 
 	// 数据准备
-	glm::vec3 modelVecs[] = {
+	/*glm::vec3 modelVecs[] = {
 	glm::vec3(0.0f,  0.0f,  0.0f),
 	glm::vec3(2.0f,  5.0f, -15.0f),
 	glm::vec3(-1.5f, -2.2f, -2.5f),
@@ -42,40 +43,46 @@ void rend()
 	glm::vec3(1.5f,  2.0f, -2.5f),
 	glm::vec3(1.5f,  0.2f, -1.5f),
 	glm::vec3(-1.3f,  1.0f, -1.5f)
-	};
+	};*/
 
 	// 计算变换矩阵
 	//_viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f),glm::vec3(0, 1, 0));
 	_camera.update();
 	_projMatrix = glm::perspective(glm::radians(45.0f), (float)_width / (float)_height, 0.1f, 100.0f);
 
-
 	//glBindTexture(GL_TEXTURE_2D, _texture);
 
-	// 画多个立方体
+	glm::mat4 _modelMatrix(1.0f);
+	_modelMatrix = glm::translate(_modelMatrix, glm::vec3(0.0f, 0.0f, -3.0f));
+	
+	_shader_cube.start();
+	_shader_cube.setMatrix("_modelMatrix", _modelMatrix);
+	_shader_cube.setMatrix("_viewMatrix", _camera.getMatrix());
+	_shader_cube.setMatrix("_projMatrix", _projMatrix);
+	glBindVertexArray(VAO_cube);
+	glDrawArrays(GL_TRIANGLES, 0, 36); // 画36个点
+	_shader_cube.end();
 
-	for (int i = 0; i < 10; i++) {
-		glm::mat4 _modelMatrix(1.0f);
-		_modelMatrix = glm::translate(_modelMatrix, modelVecs[i]);
-		_modelMatrix = glm::rotate(_modelMatrix, glm::radians((float)glfwGetTime() * (i + 1) * 10), glm::vec3(0.0f, 1.0f, 0.0f));
 
-		_shader.start();
-		_shader.setMatrix("_modelMatrix", _modelMatrix);
-		_shader.setMatrix("_viewMatrix", _camera.getMatrix());
-		_shader.setMatrix("_projMatrix", _projMatrix);
+	_shader_sun.start();
+	_shader_sun.setMatrix("_modelMatrix", _modelMatrix);
+	_shader_sun.setMatrix("_viewMatrix", _camera.getMatrix());
+	_shader_sun.setMatrix("_projMatrix", _projMatrix);
 
-		glBindVertexArray(VAO);
+	_modelMatrix = glm::translate(_modelMatrix, glm::vec3(3.0f, 0.0f, -3.0f));
+	_shader_sun.setMatrix("_modelMatrix", _modelMatrix);
+	glBindVertexArray(VAO_sun);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	_shader_sun.end();
 
-		glDrawArrays(GL_TRIANGLES, 0, 36); // 画36个点
-		_shader.end();
-	}
 }
 
-// 告诉shader数据解析方式
-// 激活锚点
-
-void initModel()
+// 返回 VAO
+uint createModel()
 {
+	uint _VAO = 0;
+	uint _VBO = 0;
+
 	// 坐标 - uv , 12个三角形
 	float vertices[] =
 	{
@@ -123,14 +130,14 @@ void initModel()
 	};
 
 	//获取VAO，在关闭VAO前，期间所有的数据都会被纳入VAO的管理
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
+	glGenVertexArrays(1, &_VAO);
+	glBindVertexArray(_VAO);
 
 	// 获取vbo的index，即到底要分配多少个vbo
-	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &_VBO);
 
 	// 绑定vbo的index
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _VBO);
 
 	// 给vbo分配显存空间，传输数据
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -146,6 +153,8 @@ void initModel()
 	// 取消绑定
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // VBO 解绑
 	glBindVertexArray(0); // VAO 解绑
+
+	return _VAO;
 }
 
 void initTexture()
@@ -168,7 +177,8 @@ void initTexture()
 
 void initShader(const char* _vertexPath, const char* _fragmentPath)
 {
-	_shader.initShader(_vertexPath, _fragmentPath);
+	_shader_cube.initShader(_vertexPath, _fragmentPath);
+	_shader_sun.initShader("vsunShader.glsl", "fsunShader.glsl");
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -244,7 +254,9 @@ int main()
 	_camera.lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	_camera.setSpeed(0.005f);
 	
-	initModel();
+	VAO_cube = createModel();
+	VAO_sun = createModel();
+
 	initTexture();
 	
 	initShader("vertexShader.glsl", "fragmentShader.glsl");

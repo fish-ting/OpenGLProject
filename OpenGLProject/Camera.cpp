@@ -26,10 +26,10 @@ void Camera::move(CAMERA_MOVE _mode)
 	switch (_mode)
 	{
 	case CAMERA_MOVE::MOVE_LEFT:
-		m_position -= glm::normalize(glm::cross(m_front, m_up)) * m_speed;
+		m_position += glm::normalize(glm::cross(m_front, m_up)) * m_speed;
 		break;
 	case CAMERA_MOVE::MOVE_RIGHT:
-		m_position += glm::normalize(glm::cross(m_front, m_up)) * m_speed;
+		m_position -= glm::normalize(glm::cross(m_front, m_up)) * m_speed;
 		break;
 	case CAMERA_MOVE::MOVE_FRONT:
 		m_position += m_speed * m_front;
@@ -93,7 +93,7 @@ void Camera::onMouseMove(double _xpos, double _ypos)
 		return;
 	}
 
-	float _xOffset = _xpos - m_xpos;
+	float _xOffset = -(_xpos - m_xpos);
 	float _yOffset = -(_ypos - m_ypos);
 
 	m_xpos = _xpos;
