@@ -7,6 +7,10 @@
 unsigned int VAO_cube = 0;
 unsigned int VAO_sun = 0;  // 作为光源
 
+glm::vec3 light_pos(1.0f);
+glm::vec3 light_color(1.0f);
+float ambient_strength = 0.5f;
+
 ffImage* _pImage = NULL;
 
 unsigned int _texture = 0;
@@ -31,20 +35,6 @@ void rend()
 	// 开启深度检测
 	glEnable(GL_DEPTH_TEST);
 
-	// 数据准备
-	/*glm::vec3 modelVecs[] = {
-	glm::vec3(0.0f,  0.0f,  0.0f),
-	glm::vec3(2.0f,  5.0f, -15.0f),
-	glm::vec3(-1.5f, -2.2f, -2.5f),
-	glm::vec3(-3.8f, -2.0f, -12.3f),
-	glm::vec3(2.4f, -0.4f, -3.5f),
-	glm::vec3(-1.7f,  3.0f, -7.5f),
-	glm::vec3(1.3f, -2.0f, -2.5f),
-	glm::vec3(1.5f,  2.0f, -2.5f),
-	glm::vec3(1.5f,  0.2f, -1.5f),
-	glm::vec3(-1.3f,  1.0f, -1.5f)
-	};*/
-
 	// 计算变换矩阵
 	//_viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f),glm::vec3(0, 1, 0));
 	_camera.update();
@@ -59,6 +49,8 @@ void rend()
 	_shader_cube.setMatrix("_modelMatrix", _modelMatrix);
 	_shader_cube.setMatrix("_viewMatrix", _camera.getMatrix());
 	_shader_cube.setMatrix("_projMatrix", _projMatrix);
+	_shader_cube.setVec3("light_color", light_color);
+	_shader_cube.setFloat("ambient_strength", ambient_strength);
 	glBindVertexArray(VAO_cube);
 	glDrawArrays(GL_TRIANGLES, 0, 36); // 画36个点
 	_shader_cube.end();
@@ -69,7 +61,8 @@ void rend()
 	_shader_sun.setMatrix("_viewMatrix", _camera.getMatrix());
 	_shader_sun.setMatrix("_projMatrix", _projMatrix);
 
-	_modelMatrix = glm::translate(_modelMatrix, glm::vec3(3.0f, 0.0f, -3.0f));
+	_modelMatrix = glm::mat4(1.0f);
+	_modelMatrix = glm::translate(_modelMatrix, light_pos);
 	_shader_sun.setMatrix("_modelMatrix", _modelMatrix);
 	glBindVertexArray(VAO_sun);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -256,6 +249,8 @@ int main()
 	
 	VAO_cube = createModel();
 	VAO_sun = createModel();
+	light_pos = glm::vec3(3.0f, 0.0f, -1.0f); // 设置光的位置
+	light_color = glm::vec3(1.0f, 1.0f, 1.0f);
 
 	initTexture();
 	

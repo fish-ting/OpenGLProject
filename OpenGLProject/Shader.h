@@ -32,5 +32,7 @@ public:
 
 	// 封装函数：向shader里传输数据
 	void setMatrix(const std::string& _name, glm::mat4 _matrix)const;
+	void setVec3(const std::string& _name, glm::vec3 _vec3)const;
+	void setFloat(const std::string& _name, float _f)const;
 };
 
