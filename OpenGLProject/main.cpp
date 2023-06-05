@@ -10,10 +10,11 @@ unsigned int VAO_sun = 0;  // 作为光源
 glm::vec3 light_pos(1.0f);
 glm::vec3 light_color(1.0f);
 
+// 光照贴图
+uint _textureBox = 0;
+uint _textureSpec = 0;
 
 ffImage* _pImage = NULL;
-
-unsigned int _texture = 0;
 
 Shader _shader_cube;
 Shader _shader_sun;
@@ -40,11 +41,14 @@ void rend()
 	_camera.update();
 	_projMatrix = glm::perspective(glm::radians(45.0f), (float)_width / (float)_height, 0.1f, 100.0f);
 
-	//glBindTexture(GL_TEXTURE_2D, _texture);
-
 	glm::mat4 _modelMatrix(1.0f);
 	_modelMatrix = glm::translate(_modelMatrix, glm::vec3(0.0f, 0.0f, -3.0f));
 	
+	glActiveTexture(GL_TEXTURE0); // 激活当前使用的texture0
+	glBindTexture(GL_TEXTURE_2D, _textureBox);
+	glActiveTexture(GL_TEXTURE1); // 激活当前使用的texture1
+	glBindTexture(GL_TEXTURE_2D, _textureSpec);
+
 	_shader_cube.start();
 	_shader_cube.setMatrix("_modelMatrix", _modelMatrix);
 	_shader_cube.setMatrix("_viewMatrix", _camera.getMatrix());
@@ -52,16 +56,14 @@ void rend()
 	_shader_cube.setVec3("view_pos", _camera.getPosition());
 
 	// 传入光照属性
-	light_color = glm::vec3((float)glfwGetTime() * 0.8f, (float)glfwGetTime() * 0.5f, (float)glfwGetTime() * 0.7f);
+	// light_color = glm::vec3((float)glfwGetTime() * 0.8f, (float)glfwGetTime() * 0.5f, (float)glfwGetTime() * 0.7f);
 	_shader_cube.setVec3("myLight.m_ambient", light_color * glm::vec3(0.1f));
 	_shader_cube.setVec3("myLight.m_diffuse", light_color * glm::vec3(0.7f));
 	_shader_cube.setVec3("myLight.m_specular", light_color * glm::vec3(0.5f));
 	_shader_cube.setVec3("myLight.m_pos", light_pos);
 
 	// 传入物体材质属性
-	_shader_cube.setVec3("myMaterial.m_ambient", glm::vec3(0.1f));
-	_shader_cube.setVec3("myMaterial.m_diffuse", glm::vec3(0.7f));
-	_shader_cube.setVec3("myMaterial.m_specular", glm::vec3(0.8f));
+	_shader_cube.setInt("myMaterial.m_specular", 1);
 	_shader_cube.setFloat("myMaterial.m_shiness", 32);
 
 	glBindVertexArray(VAO_cube);
@@ -163,9 +165,10 @@ uint createModel()
 	return _VAO;
 }
 
-void initTexture()
+uint createTexture(const char* _fileName)
 {
-	_pImage = ffImage::readFromFile("res/fish.jpg");
+	_pImage = ffImage::readFromFile(_fileName);
+	uint _texture = 0;
 
 	// 生成纹理对象并绑定
 	glGenTextures(1, &_texture);
@@ -179,6 +182,7 @@ void initTexture()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  // 变大时
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _pImage->getWidth(), _pImage->getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, _pImage->getData());
+	return _texture;
 }
 
 void initShader(const char* _vertexPath, const char* _fragmentPath)
@@ -262,11 +266,12 @@ int main()
 	
 	VAO_cube = createModel();
 	VAO_sun = createModel();
-	light_pos = glm::vec3(3.0f, 0.0f, -1.0f); // 设置光的位置
+	light_pos = glm::vec3(3.0f, 1.0f, -1.0f); // 设置光的位置
 	light_color = glm::vec3(1.0f, 1.0f, 1.0f);
 
-	initTexture();
-	
+	_textureBox = createTexture("res/fish.jpg");
+	_textureSpec = createTexture("res/specular.png");
+
 	initShader("vertexShader.glsl", "fragmentShader.glsl");
 
 	while (!glfwWindowShouldClose(window)) {

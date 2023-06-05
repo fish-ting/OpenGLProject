@@ -39,7 +39,7 @@ public:
 
 		m_pitch = 0.0f;
 		m_yaw = -90.0f; // 看向z轴的负方向
-		m_sensitivity = 0.01f;
+		m_sensitivity = 0.1f;
 
 		m_xpos = 0;
 		m_ypos = 0;
