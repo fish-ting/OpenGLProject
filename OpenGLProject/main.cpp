@@ -9,7 +9,7 @@ unsigned int VAO_sun = 0;  // 作为光源
 
 glm::vec3 light_pos(1.0f);
 glm::vec3 light_color(1.0f);
-float ambient_strength = 0.5f;
+
 
 ffImage* _pImage = NULL;
 
@@ -49,10 +49,21 @@ void rend()
 	_shader_cube.setMatrix("_modelMatrix", _modelMatrix);
 	_shader_cube.setMatrix("_viewMatrix", _camera.getMatrix());
 	_shader_cube.setMatrix("_projMatrix", _projMatrix);
-	_shader_cube.setVec3("light_color", light_color);
-	_shader_cube.setVec3("light_pos", light_pos);
 	_shader_cube.setVec3("view_pos", _camera.getPosition());
-	_shader_cube.setFloat("ambient_strength", ambient_strength);
+
+	// 传入光照属性
+	light_color = glm::vec3((float)glfwGetTime() * 0.8f, (float)glfwGetTime() * 0.5f, (float)glfwGetTime() * 0.7f);
+	_shader_cube.setVec3("myLight.m_ambient", light_color * glm::vec3(0.1f));
+	_shader_cube.setVec3("myLight.m_diffuse", light_color * glm::vec3(0.7f));
+	_shader_cube.setVec3("myLight.m_specular", light_color * glm::vec3(0.5f));
+	_shader_cube.setVec3("myLight.m_pos", light_pos);
+
+	// 传入物体材质属性
+	_shader_cube.setVec3("myMaterial.m_ambient", glm::vec3(0.1f));
+	_shader_cube.setVec3("myMaterial.m_diffuse", glm::vec3(0.7f));
+	_shader_cube.setVec3("myMaterial.m_specular", glm::vec3(0.8f));
+	_shader_cube.setFloat("myMaterial.m_shiness", 32);
+
 	glBindVertexArray(VAO_cube);
 	glDrawArrays(GL_TRIANGLES, 0, 36); // 画36个点
 	_shader_cube.end();
