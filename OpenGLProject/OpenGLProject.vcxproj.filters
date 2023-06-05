@@ -44,6 +44,12 @@
     <None Include="fsunShader.glsl">
       <Filter>源文件</Filter>
     </None>
+    <None Include="dirShaderf.glsl">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="dirShaderv.glsl">
+      <Filter>源文件</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
