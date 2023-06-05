@@ -50,6 +50,12 @@
     <None Include="dirShaderv.glsl">
       <Filter>源文件</Filter>
     </None>
+    <None Include="pointShaderf.glsl">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="pointShaderv.glsl">
+      <Filter>源文件</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">

@@ -148,6 +148,8 @@
     <None Include="dirShaderv.glsl" />
     <None Include="fragmentShader.glsl" />
     <None Include="fsunShader.glsl" />
+    <None Include="pointShaderf.glsl" />
+    <None Include="pointShaderv.glsl" />
     <None Include="vertexShader.glsl" />
     <None Include="vsunShader.glsl" />
   </ItemGroup>
