@@ -150,6 +150,8 @@
     <None Include="fsunShader.glsl" />
     <None Include="pointShaderf.glsl" />
     <None Include="pointShaderv.glsl" />
+    <None Include="spotShaderf.glsl" />
+    <None Include="spotShaderv.glsl" />
     <None Include="vertexShader.glsl" />
     <None Include="vsunShader.glsl" />
   </ItemGroup>

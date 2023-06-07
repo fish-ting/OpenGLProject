@@ -60,6 +60,7 @@ public:
 
 	glm::mat4 getMatrix();
 	glm::vec3 getPosition();
+	glm::vec3 getDirection();
 
 	void move(CAMERA_MOVE _mode);
 

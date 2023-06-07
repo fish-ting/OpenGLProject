@@ -26,6 +26,11 @@ glm::vec3 Camera::getPosition()
 	return m_position;
 }
 
+glm::vec3 Camera::getDirection()
+{
+	return m_front;
+}
+
 void Camera::move(CAMERA_MOVE _mode)
 {
 	switch (_mode)
