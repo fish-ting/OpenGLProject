@@ -79,7 +79,12 @@ void rend()
 	_shader_spot.setVec3("myLight.m_specular", light_color * glm::vec3(0.9f));
 	_shader_spot.setVec3("myLight.m_pos", _camera.getPosition());
 	_shader_spot.setVec3("myLight.m_direction", _camera.getDirection());
-	_shader_spot.setFloat("myLight.m_cutOff", glm::cos(glm::radians(12.5f)));
+	_shader_spot.setFloat("myLight.m_cutOff", glm::cos(glm::radians(12.0f)));
+	_shader_spot.setFloat("myLight.m_outCutOff", glm::cos(glm::radians(20.0f)));
+
+	_shader_spot.setFloat("myLight.m_c", 1.0f);
+	_shader_spot.setFloat("myLight.m_l", 0.07f);
+	_shader_spot.setFloat("myLight.m_q", 0.017f);
 
 	_shader_spot.setFloat("myLight.m_c", 1.0f);
 	_shader_spot.setFloat("myLight.m_l", 0.07f);

@@ -1,11 +1,2 @@
-﻿  Camera.cpp
-E:\OpenGL相关知识\OpenGLProject\OpenGLProject\OpenGLProject\Camera.cpp(100,12): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-E:\OpenGL相关知识\OpenGLProject\OpenGLProject\OpenGLProject\Camera.cpp(101,12): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-E:\OpenGL相关知识\OpenGLProject\OpenGLProject\OpenGLProject\Camera.cpp(106,17): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-E:\OpenGL相关知识\OpenGLProject\OpenGLProject\OpenGLProject\Camera.cpp(107,17): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-E:\OpenGL相关知识\OpenGLProject\OpenGLProject\OpenGLProject\Camera.cpp(109,11): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-E:\OpenGL相关知识\OpenGLProject\OpenGLProject\OpenGLProject\Camera.cpp(110,11): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-  main.cpp
-  正在生成代码...
-glfw3.lib(input.obj) : warning LNK4099: 未找到 PDB“”(使用“glfw3.lib(input.obj)”或在“”中寻找)；正在链接对象，如同没有调试信息一样
+﻿  main.cpp
   OpenGLProject.vcxproj -> E:\OpenGL相关知识\OpenGLProject\OpenGLProject\x64\Debug\OpenGLProject.exe
