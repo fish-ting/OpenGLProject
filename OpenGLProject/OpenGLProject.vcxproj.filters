@@ -62,6 +62,12 @@
     <None Include="spotShaderv.glsl">
       <Filter>源文件</Filter>
     </None>
+    <None Include="sceneShaderf.glsl">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="sceneShaderv.glsl">
+      <Filter>源文件</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">

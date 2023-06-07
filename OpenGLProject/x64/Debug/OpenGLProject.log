@@ -1,2 +1,12 @@
 ﻿  main.cpp
+E:\OpenGL相关知识\OpenGLProject\OpenGLProject\OpenGLProject\main.cpp(99,51): warning C4305: “参数”: 从“double”到“float”截断
+E:\OpenGL相关知识\OpenGLProject\OpenGLProject\OpenGLProject\main.cpp(100,52): warning C4305: “参数”: 从“double”到“float”截断
+E:\OpenGL相关知识\OpenGLProject\OpenGLProject\OpenGLProject\main.cpp(107,51): warning C4305: “参数”: 从“double”到“float”截断
+E:\OpenGL相关知识\OpenGLProject\OpenGLProject\OpenGLProject\main.cpp(108,52): warning C4305: “参数”: 从“double”到“float”截断
+E:\OpenGL相关知识\OpenGLProject\OpenGLProject\OpenGLProject\main.cpp(115,51): warning C4305: “参数”: 从“double”到“float”截断
+E:\OpenGL相关知识\OpenGLProject\OpenGLProject\OpenGLProject\main.cpp(116,52): warning C4305: “参数”: 从“double”到“float”截断
+E:\OpenGL相关知识\OpenGLProject\OpenGLProject\OpenGLProject\main.cpp(123,51): warning C4305: “参数”: 从“double”到“float”截断
+E:\OpenGL相关知识\OpenGLProject\OpenGLProject\OpenGLProject\main.cpp(124,52): warning C4305: “参数”: 从“double”到“float”截断
+E:\OpenGL相关知识\OpenGLProject\OpenGLProject\OpenGLProject\main.cpp(133,47): warning C4305: “参数”: 从“double”到“float”截断
+E:\OpenGL相关知识\OpenGLProject\OpenGLProject\OpenGLProject\main.cpp(134,48): warning C4305: “参数”: 从“double”到“float”截断
   OpenGLProject.vcxproj -> E:\OpenGL相关知识\OpenGLProject\OpenGLProject\x64\Debug\OpenGLProject.exe
