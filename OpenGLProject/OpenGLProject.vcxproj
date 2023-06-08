@@ -144,6 +144,8 @@
     <ClCompile Include="Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="colorShaderf.glsl" />
+    <None Include="colorShaderv.glsl" />
     <None Include="dirShaderf.glsl" />
     <None Include="dirShaderv.glsl" />
     <None Include="fragmentShader.glsl" />

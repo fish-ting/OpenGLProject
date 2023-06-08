@@ -22,6 +22,7 @@ Shader _shader_dir;
 Shader _shader_point;  // 点光源
 Shader _shader_spot;   // 聚光灯
 Shader _shader_scene;
+Shader _shader_color;
 
 glm::mat4 _viewMatrix(1.0f);
 glm::mat4 _projMatrix(1.0f);
@@ -33,12 +34,16 @@ Camera _camera;
 
 void rend()
 {
-	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-	// 颜色和深度区清零
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	// 开启深度检测
 	glEnable(GL_DEPTH_TEST);
+	// 开启模板检测
+	glEnable(GL_STENCIL_TEST);
+	// 允许写入
+	glStencilMask(0xFF);
+
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	// 颜色、深度、模板清零
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	// 数据准备
 	glm::vec3 cubePositions[] = {
@@ -53,7 +58,6 @@ void rend()
 		glm::vec3(1.5f,  0.2f, -1.5f),
 		glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
-
 	glm::vec3 pointLightPositions[] = {
 		glm::vec3(0.7f,  0.2f,  2.0f),
 		glm::vec3(2.3f, -3.3f, -4.0f),
@@ -64,10 +68,10 @@ void rend()
 	// 计算变换矩阵
 	_camera.update();
 	_projMatrix = glm::perspective(glm::radians(45.0f), (float)_width / (float)_height, 0.1f, 100.0f);
-
 	glm::mat4 _modelMatrix(1.0f);
 	_modelMatrix = glm::translate(_modelMatrix, glm::vec3(0.0f, 0.0f, -3.0f));
 
+	// 激活纹理
 	glActiveTexture(GL_TEXTURE0); // 激活当前使用的texture0
 	glBindTexture(GL_TEXTURE_2D, _textureBox);
 	glActiveTexture(GL_TEXTURE1); // 激活当前使用的texture1
@@ -135,6 +139,15 @@ void rend()
 	_shader_scene.setFloat("_spotLight.m_cutOff", glm::cos(glm::radians(12.5f)));
 	_shader_scene.setFloat("_spotLight.m_outCutOff", glm::cos(glm::radians(15.0f)));
 
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);  // 永远通过
+	glStencilMask(0xFF); // 允许写入
+
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);  // 永远通过
+	glStencilMask(0xFF); // 允许写入
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
 	for (int i = 0; i < 10; i++)
 	{
 		_modelMatrix = glm::mat4(1.0f);
@@ -148,6 +161,31 @@ void rend()
 
 	_shader_scene.end();
 
+	// 绘制高光边缘
+	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);  // 不等于1就通过
+	glStencilMask(0x00); // 不允许写入
+
+	_shader_color.start();
+	_shader_color.setMatrix("_viewMatrix", _camera.getMatrix());
+	_shader_color.setMatrix("_projMatrix", _projMatrix);
+
+	for (int i = 0; i < 10; i++)
+	{
+		_modelMatrix = glm::mat4(1.0f);
+		_modelMatrix = glm::translate(_modelMatrix, cubePositions[i]);
+		_modelMatrix = glm::rotate(_modelMatrix, glm::radians(i * 20.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		_modelMatrix = glm::scale(_modelMatrix, glm::vec3(1.05f, 1.05f, 1.05f));
+		
+		_shader_color.setMatrix("_modelMatrix", _modelMatrix);
+
+		glBindVertexArray(VAO_cube);
+		glDrawArrays(GL_TRIANGLES, 0, 36); // 画36个点
+	}
+
+	_shader_color.end();
+
+
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);  // 通过
 	_shader_sun.start();
 	_shader_sun.setMatrix("_modelMatrix", _modelMatrix);
 	_shader_sun.setMatrix("_viewMatrix", _camera.getMatrix());
@@ -272,6 +310,7 @@ void initShader()
 {
 	_shader_sun.initShader("vsunShader.glsl", "fsunShader.glsl");
 	_shader_scene.initShader("sceneShaderv.glsl", "sceneShaderf.glsl");
+	_shader_color.initShader("colorShaderv.glsl", "colorShaderf.glsl");
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
