@@ -45,6 +45,10 @@ void rend()
 	// 颜色、深度、模板清零
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+	glEnable(GL_CULL_FACE); // 开启面剔除
+	// glCullFace(GL_FRONT);  // 剔除正面朝向我们的面， = glFrontFace(GL_CW)
+	// glFrontFace(GL_CCW); 默认情况下，逆时针方向为正方向
+
 	// 数据准备
 	glm::vec3 cubePositions[] = {
 		glm::vec3(0.0f,  0.0f,  0.0f),
